@@ -2,12 +2,8 @@
 using Smod2.Attributes;
 using Smod2.EventHandlers;
 using Smod2.Events;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace ArithFeather.DeconOnDemand
