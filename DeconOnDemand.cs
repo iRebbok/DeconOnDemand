@@ -21,6 +21,15 @@ namespace ArithFeather.DeconOnDemand
 		)]
 	public class DeconOnDemand : Plugin, IEventHandlerCallCommand, IEventHandlerWaitingForPlayers
 	{
+		private const string InfoMessage = "'.decon disable' - Disables decontamination)\n" +
+							"'.decon #'  Starts decontamination with minute value\n" +
+							"Announcements in:\n" +
+							"15 Minutes.\n" +
+							"10 Minutes.\n" +
+							"5 Minutes.\n" +
+							"1 Minute.\n" +
+							"0.5 Minutes. (30 seconds)\n";
+
 		public override void OnDisable() => Info("DeconOnDemand disabled.");
 		public override void OnEnable() => Info("DeconOnDemand enabled.");
 		public override void Register()
@@ -97,26 +106,23 @@ namespace ArithFeather.DeconOnDemand
 
 					if (input == "HELP")
 					{
-						string message = "'.decon disable' - Disables decontamination)\n" +
-							"'.decon #'  - Starts decontamination\n" +
-							"0 - 15 Minutes.\n" +
-							"1 - 10 Minutes.\n" +
-							"2 - 5 Minutes.\n" +
-							"3 - 1 Minute.\n" +
-							"4 - 30 Seconds.\n" +
-							"5 - Decontaminate.";
-
-						ev.ReturnMessage = message + "minutes.";
+						ev.ReturnMessage = InfoMessage;
 					}
 					else if (input == "DISABLE")
 					{
 						disableDeconInfo.SetValue(decontamination, true);
 						ev.ReturnMessage = "Decontamination Disabled. Note you can not disable decontamination after decontaminate starts.";
 					}
-					else if (int.TryParse(inputs[1], out int result) && result >= 0 && result <= 5)
+					else if (float.TryParse(inputs[1], out float minutes) && minutes >= 0)
 					{
-						InitializeDecontamination(result);
-						ev.ReturnMessage = "Initializing Decontamination";
+						var seconds = minutes * 60;
+						InitializeDecontamination((float)seconds);
+
+
+						var startSeconds = decontamination.announcements[decontamination.GetCurAnnouncement()].startTime;
+						int startMins = (int)Mathf.Floor(startSeconds / 60f);
+						seconds = startSeconds - (startMins * 60f);
+						ev.ReturnMessage = $"Initializing Decontamination. Next annoucnement in {startMins}:{seconds:D2}";
 					}
 					else
 					{
