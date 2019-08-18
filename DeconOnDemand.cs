@@ -54,12 +54,36 @@ namespace ArithFeather.DeconOnDemand
 			decontamination = GameObject.Find("Host").GetComponent<DecontaminationLCZ>() as DecontaminationLCZ;
 		}
 
-		private void InitializeDecontamination(float time)
+		private void InitializeDecontamination(float minutes)
 		{
-			if (time > 0f)
+			if (minutes >= 0f)
 			{
+				switch (minutes)
+				{
+					case 15f:
+						decontamination.time = 41f;
+						break;
+					case 10f:
+						decontamination.time = 239f;
+						break;
+					case 5f:
+						decontamination.time = 437f;
+						break;
+					case 1f:
+						decontamination.time = 635f;
+						break;
+					case 0.5f:
+						decontamination.time = 665f;
+						break;
+					case 0f:
+						decontamination.time = 703.4f;
+						break;
+					default:
+						decontamination.time = (11.74f - minutes) * 60;
+						break;
+				}
+			
 				disableDeconInfo.SetValue(decontamination, false);
-				decontamination.time = (11.74f - time) * 60f;
 
 				for (int i = 0; i < decontamination.announcements.Count; i++)
 				{
@@ -115,14 +139,8 @@ namespace ArithFeather.DeconOnDemand
 					}
 					else if (float.TryParse(inputs[1], out float minutes) && minutes >= 0)
 					{
-						var seconds = minutes * 60;
-						InitializeDecontamination((float)seconds);
-
-
-						var startSeconds = decontamination.announcements[decontamination.GetCurAnnouncement()].startTime;
-						int startMins = (int)Mathf.Floor(startSeconds / 60f);
-						seconds = startSeconds - (startMins * 60f);
-						ev.ReturnMessage = $"Initializing Decontamination. Next annoucnement in {startMins}:{seconds:D2}";
+						InitializeDecontamination((float)minutes);
+						ev.ReturnMessage = $"Initializing Decontamination.";
 					}
 					else
 					{
