@@ -14,7 +14,7 @@ namespace ArithFeather.DeconOnDemand
 		description = "",
 		id = "ArithFeather.DeconOnDemand",
 		configPrefix = "afdod",
-		version = "1.0",
+		version = "1.1",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
@@ -124,7 +124,7 @@ namespace ArithFeather.DeconOnDemand
 			{
 				string[] inputs = ev.Command.Split(' ');
 
-				if (inputs.Count() == 2 && inputs[0].ToUpper() == "DECON")
+				if (inputs.Count() > 1 && inputs[0].ToUpper() == "DECON")
 				{
 					var input = inputs[1].ToUpper();
 
@@ -144,8 +144,12 @@ namespace ArithFeather.DeconOnDemand
 					}
 					else
 					{
-						ev.ReturnMessage = "Type '.decon help' for more information.";
+						ev.ReturnMessage = $"Wrong Input..\n{InfoMessage}";
 					}
+				}
+				else if (inputs.Count() == 1 && inputs[0].ToUpper() == "DECON")
+				{
+					ev.ReturnMessage = $"Wrong Input..\n{InfoMessage}";
 				}
 			}
 		}
