@@ -14,7 +14,7 @@ namespace ArithFeather.DeconOnDemand
 		description = "",
 		id = "ArithFeather.DeconOnDemand",
 		configPrefix = "afdod",
-		version = "1.1",
+		version = "1.2",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
@@ -119,37 +119,45 @@ namespace ArithFeather.DeconOnDemand
 
 		public void OnCallCommand(PlayerCallCommandEvent ev)
 		{
-			var rank = ev.Player.GetRankName().ToUpper();
-			if (rank == "OWNER" || rank == "MOD" || rank == "ADMIN")
+			var commandToUpper = ev.Command.ToUpper();
+			if (commandToUpper.StartsWith("DECON"))
 			{
-				string[] inputs = ev.Command.Split(' ');
-
-				if (inputs.Count() > 1 && inputs[0].ToUpper() == "DECON")
+				var rank = ev.Player.GetRankName().ToUpper();
+				if (rank == "OWNER" || rank == "MOD" || rank == "ADMIN" || rank == "DECON")
 				{
-					var input = inputs[1].ToUpper();
+					string[] inputs = ev.Command.Split(' ');
 
-					if (input == "HELP")
+					if (inputs.Count() > 1)
 					{
-						ev.ReturnMessage = InfoMessage;
-					}
-					else if (input == "DISABLE")
-					{
-						disableDeconInfo.SetValue(decontamination, true);
-						ev.ReturnMessage = "Decontamination Disabled. Note you can not disable decontamination after decontaminate starts.";
-					}
-					else if (float.TryParse(inputs[1], out float minutes) && minutes >= 0)
-					{
-						InitializeDecontamination((float)minutes);
-						ev.ReturnMessage = $"Initializing Decontamination.";
+						var input = inputs[1].ToUpper();
+
+						if (input == "HELP")
+						{
+							ev.ReturnMessage = InfoMessage;
+						}
+						else if (input == "DISABLE")
+						{
+							disableDeconInfo.SetValue(decontamination, true);
+							ev.ReturnMessage = "Decontamination Disabled. Note you can not disable decontamination after decontaminate starts.";
+						}
+						else if (float.TryParse(inputs[1], out float minutes) && minutes >= 0)
+						{
+							InitializeDecontamination((float)minutes);
+							ev.ReturnMessage = $"Initializing Decontamination.";
+						}
+						else
+						{
+							ev.ReturnMessage = $"Wrong Input..\n{InfoMessage}";
+						}
 					}
 					else
 					{
 						ev.ReturnMessage = $"Wrong Input..\n{InfoMessage}";
 					}
 				}
-				else if (inputs.Count() == 1 && inputs[0].ToUpper() == "DECON")
+				else
 				{
-					ev.ReturnMessage = $"Wrong Input..\n{InfoMessage}";
+					ev.ReturnMessage = "You do not have the correct rank to call decontamination.\nRank must be one of: owner, admin, mod, or decon";
 				}
 			}
 		}
