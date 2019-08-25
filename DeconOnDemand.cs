@@ -82,7 +82,7 @@ namespace ArithFeather.DeconOnDemand
 						decontamination.time = (11.74f - minutes) * 60;
 						break;
 				}
-			
+
 				disableDeconInfo.SetValue(decontamination, false);
 
 				for (int i = 0; i < decontamination.announcements.Count; i++)
