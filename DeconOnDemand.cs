@@ -1,5 +1,6 @@
 ﻿using Smod2;
 using Smod2.Attributes;
+using Smod2.Config;
 using Smod2.EventHandlers;
 using Smod2.Events;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace ArithFeather.DeconOnDemand
 		description = "",
 		id = "ArithFeather.DeconOnDemand",
 		configPrefix = "afdod",
-		version = "1.2",
+		version = "1.3",
 		SmodMajor = 3,
 		SmodMinor = 4,
 		SmodRevision = 0
@@ -38,13 +39,14 @@ namespace ArithFeather.DeconOnDemand
 			AddEventHandlers(this);
 		}
 
+		[ConfigOption] private readonly string[] allowedRanks = new string[] { "ADMIN", "OWNER" };
+
 		private static DeconOnDemand instance;
 		private DecontaminationLCZ decontamination;
 
 		public static void StartDecontamination(float timeInMinutes) => instance.InitializeDecontamination(timeInMinutes);
 		public static void StartDecontamination(int announcement) => instance.InitializeDecontamination(announcement);
 		public static void DisableDecontamination() => instance.disableDeconInfo.SetValue(instance.decontamination, true);
-
 
 		private readonly FieldInfo curAnmInfo = typeof(DecontaminationLCZ).GetField("curAnm", BindingFlags.NonPublic | BindingFlags.Instance);
 		private readonly FieldInfo disableDeconInfo = typeof(DecontaminationLCZ).GetField("smDisableDecontamination", BindingFlags.NonPublic | BindingFlags.Instance);
@@ -123,7 +125,17 @@ namespace ArithFeather.DeconOnDemand
 			if (commandToUpper.StartsWith("DECON"))
 			{
 				var rank = ev.Player.GetRankName().ToUpper();
-				if (rank == "OWNER" || rank == "MOD" || rank == "ADMIN" || rank == "DECON")
+				bool allowed = false;
+				foreach (var r in allowedRanks)
+				{
+					if (r.ToUpper() == rank)
+					{
+						allowed = true;
+						break;
+					}
+				}
+
+				if (allowed)
 				{
 					string[] inputs = ev.Command.Split(' ');
 
